@@ -262,7 +262,7 @@ bool Schedule::schedule(ScheduleInfo& scheduleInfo, const Net* net, const std::v
         if(config.type == MNN_FORWARD_AUTO) {
             if(compute.type == MNN_FORWARD_OPENCL || compute.type == MNN_FORWARD_METAL) {
                 // AUTO set default gpu-mode MNN_GPU_TUNING_FAST
-                compute.numThread = 16;
+                compute.numThread = 64;
             }
         }
         compute.user      = config.backendConfig;

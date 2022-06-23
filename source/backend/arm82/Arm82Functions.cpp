@@ -13,6 +13,7 @@
 
 #if defined(MNN_USE_NEON)
 #include <arm_neon.h>
+#define __FLT16_MAX__ 65536.0
 #endif
 
 extern "C" {
@@ -141,9 +142,9 @@ static void MNNGridSampleComputeCordFP16(FLOAT16* dst, const FLOAT16* src, size_
     if (src != dst) {
         vst2q_f16(dst - areaLack * 2, cordH);
     } else {
-        auto tmp = vld1q_f16_x2(dst - 16); // store data of the last pack to avoid covering.
+        auto tmp = vld1q_f16(dst - 16); // store data of the last pack to avoid covering.
         vst2q_f16(dst - areaLack * 2, cordH);
-        vst1q_f16_x2(dst - 16, tmp);
+        vst1q_f16(dst - 16, tmp);
     }
 }
 

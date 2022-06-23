@@ -1491,11 +1491,12 @@ void cpuinfo_arm_init(struct cpuinfo_arm_isa* cpuinfo_isa) {
     // const uint32_t cpu_type = get_sys_info_by_name("hw.cputype");
     // const uint32_t cpu_subtype = get_sys_info_by_name("hw.cpusubtype");
 
-    cpuinfo_isa->fp16arith = cpu_family == CPUFAMILY_ARM_MONSOON_MISTRAL ||
-                             cpu_family == CPUFAMILY_ARM_VORTEX_TEMPEST ||
-                             cpu_family == CPUFAMILY_ARM_LIGHTNING_THUNDER ||
-                             cpu_family == CPUFAMILY_ARM_FIRESTORM_ICESTORM ||
-                             cpu_family == CPUFAMILY_ARM_AVALANCHE_BLIZZARD;
+    // cpuinfo_isa->fp16arith = cpu_family == CPUFAMILY_ARM_MONSOON_MISTRAL ||
+    //                          cpu_family == CPUFAMILY_ARM_VORTEX_TEMPEST ||
+    //                          cpu_family == CPUFAMILY_ARM_LIGHTNING_THUNDER ||
+    //                          cpu_family == CPUFAMILY_ARM_FIRESTORM_ICESTORM ||
+    //                          cpu_family == CPUFAMILY_ARM_AVALANCHE_BLIZZARD;
+    cpuinfo_isa->fp16arith = true;
 
     cpuinfo_isa->dot = cpu_family == CPUFAMILY_ARM_LIGHTNING_THUNDER ||
                        cpu_family == CPUFAMILY_ARM_FIRESTORM_ICESTORM ||
@@ -1509,9 +1510,11 @@ void cpuinfo_arm_init(struct cpuinfo_arm_isa* cpuinfo_isa) {
 #define CPUFAMILY_AARCH64_FIRESTORM_ICESTORM 0x1b588bb3
 #endif
     const uint32_t cpu_family = get_sys_info_by_name("hw.cpufamily");
-    cpuinfo_isa->fp16arith = cpu_family == CPUFAMILY_AARCH64_FIRESTORM_ICESTORM;
+    // cpuinfo_isa->fp16arith = cpu_family == CPUFAMILY_AARCH64_FIRESTORM_ICESTORM;
+    cpuinfo_isa->fp16arith = true;
     cpuinfo_isa->dot = cpu_family == CPUFAMILY_AARCH64_FIRESTORM_ICESTORM;
 #endif
+    cpuinfo_isa->fp16arith = true;
     MNN_PRINT("The device support dot:%d, support fp16:%d\n", cpuinfo_isa->dot, cpuinfo_isa->fp16arith);
 }
 
