@@ -97,17 +97,18 @@ static std::vector<float> runNet(VARP netOutput, const ScheduleConfig& config, i
     std::shared_ptr<Tensor> inputTensorHost(Tensor::createHostTensorFromDevice(inputTensor, false));
     int eleSize = inputTensorHost->elementSize();
     for (int i = 0; i < eleSize; ++i) {
-        inputTensorHost->host<float>()[i] = 0.0f;
+        inputTensorHost->host<float>()[i] = 0.1f;
     }
     auto outputTensor = net->getSessionOutput(session, NULL);
     std::shared_ptr<Tensor> outputTensorHost(Tensor::createHostTensorFromDevice(outputTensor, false));
+    // printf("start\n");
 
     // Warming up...
-    for (int i = 0; i < 3; ++i) {
-        inputTensor->copyFromHostTensor(inputTensorHost.get());
-        net->runSession(session);
-        outputTensor->copyToHostTensor(outputTensorHost.get());
-    }
+    // for (int i = 0; i < 10; ++i) {
+    //     inputTensor->copyFromHostTensor(inputTensorHost.get());
+    //     net->runSession(session);
+    //     outputTensor->copyToHostTensor(outputTensorHost.get());
+    // }
 
     std::vector<float> costs;
 
@@ -116,7 +117,9 @@ static std::vector<float> runNet(VARP netOutput, const ScheduleConfig& config, i
         auto timeBegin = getTimeInUs();
 
         inputTensor->copyFromHostTensor(inputTensorHost.get());
+        // auto timeBegin = getTimeInUs();
         net->runSession(session);
+        // auto timeEnd = getTimeInUs();
         outputTensor->copyToHostTensor(outputTensorHost.get());
 
         auto timeEnd = getTimeInUs();
@@ -144,6 +147,18 @@ static std::vector<std::string> gDefaultModels = {
     "SqueezeNet_1000",
     "ResNet_1000_18",
     "ResNet_1000_50",
+    "testNet",
+    "vgg_1_2",
+    "vgg_2_2",
+    "vgg_3_2",
+    "vgg_4_2",
+    "vgg_5_2",
+    "C3D_c2a",
+    "fusion_1_2",
+    "fusion_2_2",
+    "fusion_3_2",
+    "fusion_4_2",
+    "fusion_5_2"
 };
 
 int main(int argc, const char* argv[]) {
@@ -222,6 +237,28 @@ int main(int argc, const char* argv[]) {
         } else if (modelType == "ShuffleNet") {
             int group = atoi(modelArgs[2].c_str());
             costs = runNet(shuffleNetExpr(group, numClass), config, loop);
+        } else if (modelType == "test") {
+            costs = runNet(testExpr(numClass), config, loop);
+        } else if (modelType == "vgg") {
+            switch (atoi(modelArgs[1].c_str())) {
+                case 1: costs = runNet(vgg_1_2(numClass), config, loop); break;
+                case 2: costs = runNet(vgg_2_2(numClass), config, loop); break;
+                case 3: costs = runNet(vgg_3_2(numClass), config, loop); break;
+                case 4: costs = runNet(vgg_4_2(numClass), config, loop); break;
+                case 5: costs = runNet(vgg_5_2(numClass), config, loop); break;
+            }
+        } else if (modelType == "C3D") {
+            switch (atoi(modelArgs[1].c_str())) {
+                case 2: costs = runNet(C3DC2A(numClass), config, loop); break;
+            }
+        } else if (modelType == "fusion") {
+            switch (atoi(modelArgs[1].c_str())) {
+                case 1: costs = runNet(fusion_1_2(numClass), config, loop); break;
+                case 2: costs = runNet(fusion_2_2(numClass), config, loop); break;
+                case 3: costs = runNet(fusion_3_2(numClass), config, loop); break;
+                case 4: costs = runNet(fusion_4_2(numClass), config, loop); break;
+                case 5: costs = runNet(fusion_5_2(numClass), config, loop); break;
+            } 
         } else {
             std::cout << "Not support Model Type " << modelType << std::endl;
             continue;
